@@ -6,7 +6,7 @@ from settings import *
 
 
 class Game:
-    wait_time = INIT_WAIT_TIME
+    wait_time = INIT_WAIT_TIME_SEC
     score = 0
     level = 0
     last_lv_score = 0
@@ -22,9 +22,9 @@ class Game:
     )
 
     def __init__(self):
-        self.stage = [0] * 2
+        self.stage = [0] * N_START_BLANK
         self.win_board = curses.newwin(ROW, COL + 1, 0, 0)
-        self.win_score = curses.newwin(1, len('999 99 9999'), ROW, 0)
+        self.win_score = curses.newwin(1, len('999 99') + 1, ROW, 0)
 
     def gen_next_row(self):
         if self.stage[-1] == 0:
@@ -47,7 +47,7 @@ class Game:
         for y, r in enumerate(reversed(self.stage[self.t:])):
             self.win_board.addstr(y, 0, self.stage2board[r], curses.color_pair(1))
         self.win_board.addstr(ROW - 1, self.car, CAR, curses.color_pair(1))
-        self.win_score.addstr(0, 0, f'{self.score} {self.level} {self.t}', curses.color_pair(1))
+        self.win_score.addstr(0, 0, f'{self.score} {self.level}', curses.color_pair(1))
 
     def update_state(self):
         self.t += 1
@@ -71,15 +71,15 @@ class Game:
     def check_input(self):
         self.win_score.refresh()
         c = self.win_board.getch()
-        if c == (R, L)[self.car]:
+        if c == (OR, OL)[self.car]:
             self.switch_car()
-        elif c == Q:
+        elif c == OQ:
             exit()
 
     def end(self):
-        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
+        # curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         self.win_board.timeout(-1)
-        while self.win_board.getch() != Q:
+        while self.win_board.getch() != OQ:
             pass
 
     def run(self):
